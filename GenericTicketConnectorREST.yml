@@ -1,0 +1,170 @@
+---
+Debugger:
+  DebugThreshold: error
+  TestMode: '0'
+Description: Ticket Connector REST Sample
+FrameworkVersion: 6.0.27
+Provider:
+  Operation:
+    ConfigItemCreate:
+      Description: ConfigItemCreate
+      IncludeTicketData: '0'
+      MappingInbound:
+        Type: Simple
+      MappingOutbound:
+        Type: Simple
+      Type: ConfigItem::ConfigItemCreate
+    ConfigItemGet:
+      Description: ConfigItemGet
+      IncludeTicketData: '0'
+      MappingInbound:
+        Config:
+          KeyMapDefault:
+            MapTo: ''
+            MapType: Keep
+          ValueMapDefault:
+            MapTo: ''
+            MapType: Keep
+        Type: Simple
+      MappingOutbound:
+        Type: Simple
+      Type: ConfigItem::ConfigItemGet
+    ConfigItemSearch:
+      Description: ConfigItemSearch
+      IncludeTicketData: '0'
+      MappingInbound:
+        Type: Simple
+      MappingOutbound:
+        Type: Simple
+      Type: ConfigItem::ConfigItemSearch
+    ConfigItemUpdate:
+      Description: ConfigItemUpdate
+      IncludeTicketData: '0'
+      MappingInbound:
+        Type: Simple
+      MappingOutbound:
+        Type: Simple
+      Type: ConfigItem::ConfigItemUpdate
+    SessionCreate:
+      Description: Creates a Session
+      IncludeTicketData: '0'
+      MappingInbound:
+        Type: Simple
+      MappingOutbound:
+        Type: Simple
+      Type: Session::SessionCreate
+    SessionEnd:
+      Description: SessionEnd
+      IncludeTicketData: '0'
+      MappingInbound:
+        Type: Simple
+      MappingOutbound:
+        Type: Simple
+      Type: Session::SessionEnd
+    SessionGet:
+      Description: SessionGet
+      IncludeTicketData: '0'
+      MappingInbound:
+        Type: Simple
+      MappingOutbound:
+        Type: Simple
+      Type: Session::SessionGet
+    TicketCreate:
+      Description: Creates a Ticket
+      IncludeTicketData: '0'
+      MappingInbound:
+        Type: Simple
+      MappingOutbound:
+        Type: Simple
+      Type: Ticket::TicketCreate
+    TicketGet:
+      Description: Retrieves Ticket data
+      IncludeTicketData: '0'
+      MappingInbound:
+        Type: Simple
+      MappingOutbound:
+        Type: Simple
+      Type: Ticket::TicketGet
+    TicketHistoryGet:
+      Description: Retrieves history of a Ticket
+      IncludeTicketData: '0'
+      MappingInbound:
+        Type: Simple
+      MappingOutbound:
+        Type: Simple
+      Type: Ticket::TicketHistoryGet
+    TicketSearch:
+      Description: Search for Tickets
+      IncludeTicketData: '0'
+      MappingInbound:
+        Type: Simple
+      MappingOutbound:
+        Type: Simple
+      Type: Ticket::TicketSearch
+    TicketUpdate:
+      Description: Updates a Ticket
+      IncludeTicketData: '0'
+      MappingInbound:
+        Type: Simple
+      MappingOutbound:
+        Type: Simple
+      Type: Ticket::TicketUpdate
+  Transport:
+    Config:
+      AdditionalHeaders: ~
+      KeepAlive: ''
+      MaxLength: '9999999999'
+      RouteOperationMapping:
+        ConfigItemCreate:
+          RequestMethod:
+          - POST
+          Route: /ConfigItem
+        ConfigItemGet:
+          RequestMethod:
+          - GET
+          Route: /ConfigItemGet/:ConfigItemID
+        ConfigItemSearch:
+          RequestMethod:
+          - POST
+          Route: /ConfigItemSearch
+        ConfigItemUpdate:
+          RequestMethod:
+          - PATCH
+          Route: /ConfigItem/:ConfigItemID
+        SessionCreate:
+          RequestMethod:
+          - POST
+          Route: /Session
+        SessionEnd:
+          RequestMethod:
+          - PATCH
+          Route: /SessionEnd/:SessionID
+        SessionGet:
+          RequestMethod:
+          - GET
+          Route: /Session/:SessionID
+        TicketCreate:
+          RequestMethod:
+          - POST
+          Route: /Ticket
+        TicketGet:
+          RequestMethod:
+          - GET
+          Route: /Ticket/:TicketID
+        TicketHistoryGet:
+          RequestMethod:
+          - GET
+          Route: /TicketHistory/:TicketID
+        TicketSearch:
+          RequestMethod:
+          - GET
+          Route: /Ticket
+        TicketUpdate:
+          RequestMethod:
+          - PATCH
+          Route: /Ticket/:TicketID
+    Type: HTTP::REST
+RemoteSystem: ''
+Requester:
+  Transport:
+    Type: ''
