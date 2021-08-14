@@ -1,5 +1,6 @@
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
+# Copyright (C) 2021 mo-azfar, https://github.com/mo-azfar/OTRS-Generic-Interface-Session-Destroy
 # --
 # This software comes with ABSOLUTELY NO WARRANTY. For details, see
 # the enclosed file COPYING for license information (GPL). If you
@@ -55,30 +56,31 @@ sub new {
         $Self->{$Needed} = $Param{$Needed};
     }
 
+	$Self->{Config}    = $Kernel::OM->Get('Kernel::Config')->Get('GenericInterface::Operation::SessionEnd');
+    $Self->{Operation} = $Param{Operation};
+
+    $Self->{DebugPrefix} = 'SessionEnd';
+	
     return $Self;
 }
 
 =head2 Run()
 
-Get session information.
+webservice REST configuration
+
+	NAME => SessionEnd
+	OPERATION BACKEND => Session::SessionEnd
+	
+	ROUTE MAPPING => /SessionEnd/:SessionID
+	REQUEST METHOD => DELETE
+
+Delete session information.
 
     my $Result = $OperationObject->Run(
         Data => {
             SessionID => '1234567890123456',
         },
     );
-    $Result = {
-        Success      => 1,                                # 0 or 1
-        ErrorMessage => '',                               # In case of an error
-        Data         => {
-            UserSessionStart    => '1293801801',
-            UserRemoteAddr      => '127.0.0.1',
-            UserRemoteUserAgent => 'Some User Agent x.x',
-            UserLastname        => 'SomeLastName',
-            UserFirstname       => 'SomeFirstname',
-            # and other preferences values
-        },
-    };
 
 =cut
 
@@ -88,15 +90,15 @@ sub Run {
     if ( !IsHashRefWithData( $Param{Data} ) ) {
 
         return $Self->ReturnError(
-            ErrorCode    => 'SessionEnd.MissingParameter',
-            ErrorMessage => "SessionEnd: The request is empty!",
+            ErrorCode    => "$Self->{OperationName}.MissingParameter",
+            ErrorMessage => "$Self->{OperationName}: The request is empty!",
         );
     }
 
     if ( !$Param{Data}->{SessionID} ) {
         return $Self->ReturnError(
-            ErrorCode    => 'SessionEnd.MissingParameter',
-            ErrorMessage => "SessionEnd: SessionID is missing!",
+            ErrorCode    => "$Self->{OperationName}.MissingParameter",
+            ErrorMessage => "$Self->{OperationName}: SessionID is missing!",
         );
     }
 
@@ -106,17 +108,18 @@ sub Run {
     my $Valid = $SessionObject->CheckSessionID(
         SessionID => $Param{Data}->{SessionID},
     );
+	
     if ( !$Valid ) {
         return $Self->ReturnError(
-            ErrorCode    => 'SessionEnd.SessionInvalid',
-            ErrorMessage => 'SessionEnd: SessionID is Invalid!',
+            ErrorCode    => "$Self->{OperationName}.SessionInvalid",
+            ErrorMessage => "$Self->{OperationName}: SessionID is Invalid!",
         );
     }
     
     #returns true (session deleted), false (if session can't get deleted)
     my $RemoveSession = $SessionObject->RemoveSessionID(SessionID =>  $Param{Data}->{SessionID},);
-    
-    return {
+    	
+	return {
         Success => 1,
         Data    => {
             SessionStatus => $RemoveSession,
@@ -127,9 +130,9 @@ sub Run {
 
 1;
 
-=head1 TERMS AND CONDITIONS
+=end Internal:
 
-This software is part of the OTRS project (L<https://otrs.org/>).
+=head1 TERMS AND CONDITIONS
 
 This software comes with ABSOLUTELY NO WARRANTY. For details, see
 the enclosed file COPYING for license information (GPL). If you
