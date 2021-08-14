@@ -90,31 +90,42 @@ sub Run {
     if ( !IsHashRefWithData( $Param{Data} ) ) {
 
         return $Self->ReturnError(
-            ErrorCode    => "$Self->{OperationName}.MissingParameter",
-            ErrorMessage => "$Self->{OperationName}: The request is empty!",
+            ErrorCode    => "$Self->{DebugPrefix}.MissingParameter",
+            ErrorMessage => "$Self->{DebugPrefix}: The request is empty!",
         );
     }
 
     if ( !$Param{Data}->{SessionID} ) {
         return $Self->ReturnError(
-            ErrorCode    => "$Self->{OperationName}.MissingParameter",
-            ErrorMessage => "$Self->{OperationName}: SessionID is missing!",
+            ErrorCode    => "$Self->{DebugPrefix}.MissingParameter",
+            ErrorMessage => "$Self->{DebugPrefix}: SessionID is missing!",
         );
     }
 
     my $SessionObject = $Kernel::OM->Get('Kernel::System::AuthSession');
 
-    # Honor SessionCheckRemoteIP, SessionMaxIdleTime, etc.
-    my $Valid = $SessionObject->CheckSessionID(
+	my %SessionDataRaw = $SessionObject->GetSessionIDData(
         SessionID => $Param{Data}->{SessionID},
     );
-	
-    if ( !$Valid ) {
-        return $Self->ReturnError(
-            ErrorCode    => "$Self->{OperationName}.SessionInvalid",
-            ErrorMessage => "$Self->{OperationName}: SessionID is Invalid!",
+    
+	if ( !%SessionDataRaw ) {
+		return $Self->ReturnError(
+            ErrorCode    => "$Self->{DebugPrefix}.SessionIDNotFound",
+            ErrorMessage => "$Self->{DebugPrefix}: SessionID Not Found!",
         );
-    }
+	}
+	
+	# Filter out some sensitive values
+    delete $SessionDataRaw{UserPw};
+    delete $SessionDataRaw{UserChallengeToken};
+
+	#only allow generic interface session source
+	if ( $SessionDataRaw{SessionSource} ne "GenericInterface" ) {
+		return $Self->ReturnError(
+            ErrorCode    => "$Self->{DebugPrefix}.SessionInvalid",
+            ErrorMessage => "$Self->{DebugPrefix}:  SessionID is Invalid!",
+        );
+	}
     
     #returns true (session deleted), false (if session can't get deleted)
     my $RemoveSession = $SessionObject->RemoveSessionID(SessionID =>  $Param{Data}->{SessionID},);
