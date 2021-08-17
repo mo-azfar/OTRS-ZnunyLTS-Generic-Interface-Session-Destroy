@@ -56,11 +56,11 @@ sub new {
         $Self->{$Needed} = $Param{$Needed};
     }
 
-	$Self->{Config}    = $Kernel::OM->Get('Kernel::Config')->Get('GenericInterface::Operation::SessionEnd');
+    $Self->{Config}    = $Kernel::OM->Get('Kernel::Config')->Get('GenericInterface::Operation::SessionEnd');
     $Self->{Operation} = $Param{Operation};
 
     $Self->{DebugPrefix} = 'SessionEnd';
-	
+    
     return $Self;
 }
 
@@ -68,11 +68,11 @@ sub new {
 
 webservice REST configuration
 
-	NAME => SessionEnd
-	OPERATION BACKEND => Session::SessionEnd
-	
-	ROUTE MAPPING => /SessionEnd/:SessionID
-	REQUEST METHOD => DELETE
+    NAME => SessionEnd
+    OPERATION BACKEND => Session::SessionEnd
+    
+    ROUTE MAPPING => /SessionEnd/:SessionID
+    REQUEST METHOD => DELETE
 
 Delete session information.
 
@@ -104,33 +104,33 @@ sub Run {
 
     my $SessionObject = $Kernel::OM->Get('Kernel::System::AuthSession');
 
-	my %SessionDataRaw = $SessionObject->GetSessionIDData(
+    my %SessionDataRaw = $SessionObject->GetSessionIDData(
         SessionID => $Param{Data}->{SessionID},
     );
     
-	if ( !%SessionDataRaw ) {
-		return $Self->ReturnError(
+    if ( !%SessionDataRaw ) {
+        return $Self->ReturnError(
             ErrorCode    => "$Self->{DebugPrefix}.SessionIDNotFound",
             ErrorMessage => "$Self->{DebugPrefix}: SessionID Not Found!",
         );
-	}
-	
-	# Filter out some sensitive values
+    }
+    
+    # Filter out some sensitive values
     delete $SessionDataRaw{UserPw};
     delete $SessionDataRaw{UserChallengeToken};
 
-	#only allow generic interface session source
-	if ( $SessionDataRaw{SessionSource} ne "GenericInterface" ) {
-		return $Self->ReturnError(
+    #only allow generic interface session source
+    if ( $SessionDataRaw{SessionSource} ne "GenericInterface" ) {
+        return $Self->ReturnError(
             ErrorCode    => "$Self->{DebugPrefix}.SessionInvalid",
             ErrorMessage => "$Self->{DebugPrefix}:  SessionID is Invalid!",
         );
-	}
+    }
     
     #returns true (session deleted), false (if session can't get deleted)
     my $RemoveSession = $SessionObject->RemoveSessionID(SessionID =>  $Param{Data}->{SessionID},);
-    	
-	return {
+        
+    return {
         Success => 1,
         Data    => {
             SessionStatus => $RemoveSession,
